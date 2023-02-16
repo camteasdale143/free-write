@@ -17,39 +17,61 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
-  fs.readdir(path.join(__dirname, 'data'), (err, files) => {
+  fs.readdir('./data', (err, files) => {
     if (err) {
-      res.render('index', { files: [] });
-    } else {
-      res.render('index', { files });
+      console.error(`Error reading directory: ${err}`);
+      res.status(500).send('Error reading directory');
+      return;
     }
+
+    const jsonFiles = files.filter(file => path.extname(file).toLowerCase() === '.json');
+
+    const data = jsonFiles.map(file => {
+      const filePath = path.join("data", file);
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      return JSON.parse(fileContent);
+    });
+
+    res.render('index', {title: "index", files: data });
   });
 });
 
 app.get('/journal', (req, res) => {
-  res.sendFile(__dirname + '/journal.html');
+  res.render('journal-create', { title: 'create-journal'});
 });
+
+app.post('/journal', (req, res) => {
+  saveJournalEntry(req, res);
+  res.redirect('/')
+});
+
+function saveJournalEntry(req, res) {
+  console.log(req.body)
+  const jsonObject = req.body;
+  const {title, text} = jsonObject
+  file_name = `./data/${title}.json`
+  obj = JSON.stringify({title, text, date: new Date()})
+  console.log(file_name, obj)
+  fs.writeFileSync(file_name, obj);
+  res.send({ message: 'Data saved successfully' });
+}
 
 app.get('/view/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filePath = __dirname + '/data/' + filename;
+  const filePath = __dirname + '/data/' + filename + '.json';
   
   fs.readFile(filePath, 'utf8', (err, content) => {
     if (err) {
       res.status(404).send({ message: 'File not found' });
     } else {
-      res.send(content);
+      console.log("BRUH")
+      res.render('view', { title: 'view', ...JSON.parse(content)});
     }
   });
 });
 
 app.post('/api/save', (req, res) => {
-  const jsonObject = req.body;
-  console.log(jsonObject)
-  title = `./data/${jsonObject['title']}.txt`
-  text = jsonObject['text']
-  fs.writeFileSync(title, text);
-  res.send({ message: 'Data saved successfully' });
+  saveJournalEntry(req, res);
 });
 
 app.listen(port, () => {

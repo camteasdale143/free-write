@@ -1,5 +1,25 @@
-<ul id="file-list">
-  <% files.forEach(function(file) { %>
-  <li><a href="/view/<%= file %>"><%= file %></a></li>
-  <% }); %>
-</ul>
+<%- include('../partials/header')%>
+
+<a href="/journal">
+  <button class="button" id="generate-button">Generate New Entry</button>
+</a>
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Date of Creation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% files.forEach(function(file) { %>
+      <tr>
+        <td><a href="../view/<%= file.title %>"><%= file.title %></td>
+        <td><%= file.date %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+
+<%- include('../partials/footer')%>
+

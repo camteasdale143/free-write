@@ -2,18 +2,35 @@ log = ""
 visible = false
 
 const currentDate = new Date();
-const year = currentDate.getFullYear();
-const month = currentDate.getMonth().toString().padStart(2, "0");
-const day = currentDate.getDate().toString().padStart(2, "0");
-const hours = currentDate.getHours().toString().padStart(2, "0");
-const minutes = currentDate.getMinutes().toString().padStart(2, "0");
-const seconds = currentDate.getSeconds().toString().padStart(2, "0");
 
-const file_name = `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+
+document.querySelector("form").addEventListener("keypress", function(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+  }
+});
+document.querySelector("form").addEventListener("submit", submitJournal)
+
+function submitJournal(event){
+  event.preventDefault();
+  const title_text= document.getElementById("title_box");
+  if (log == ''){
+    return
+  }
+
+  if (title_text.value == ""){
+    return
+  }
+
+  console.log(title_text.value, log)
+  save_text(title_text.value, log)
+  window.location = "/";
+}
 
 function handleKeyPress(event) {
-  const textBox = document.getElementById("textBox");
+  const textBox = document.getElementById("big-text");
   const output = document.getElementById("output");
+  const title_text= document.getElementById("title_box");
 
   if (event.key === " ") {
     log += " " + textBox.value
@@ -23,7 +40,7 @@ function handleKeyPress(event) {
     visible = !visible
     if (visible) {
       output.innerHTML = log;
-      save_text(file_name, log)
+      save_text(title_text.value, log)
     }
     else {
       output.innerHTML = ""
@@ -38,7 +55,7 @@ function save_text(title, text){
   fetch('/api/save', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, text }),
+    body: JSON.stringify({ title, text}),
   })
     .then((response) => response.json())
     .then((data) => {

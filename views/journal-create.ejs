@@ -1,0 +1,12 @@
+<%- include('../partials/header')%>
+  <form action="/journal" method="POST">
+    <label for="text">Entry Name:</label>
+    <input type="text" id="title_box"" />
+    <label for="text">Write:</label>
+    <input type="text" id="big-text" class="big-textbox" onkeydown="handleKeyPress(event)" />
+    <input type="submit" value="complete entry" class="button"/>
+  </form>
+  <p id="output"></p>
+<script src="script.js"></script>
+
+<%- include('../partials/footer')%>
