@@ -17,10 +17,10 @@ go to `http://localhost:3000` to view your work
 #### TODO
 
 MVP:
-[] login
-[] data formatting
-[] title and editing
-[] viewing updates
+- [] login
+- [] data formatting
+- [] title and editing
+- [] viewing updates
 
 
 
